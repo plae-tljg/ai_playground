@@ -768,6 +768,36 @@ def generate_cherry_blossom(width=40, height=15, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_ocean(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    chars = " ≈≋∿≋≈"
+
+    for y in range(height):
+        for x in range(width):
+            wave = math.sin(x / width * 4 * math.pi + y / height * math.pi)
+            value = (wave + 1) / 2
+            idx = min(int(value * len(chars)), len(chars) - 1)
+            if y < height // 2:
+                depth = y / (height // 2)
+                grid[y][x] = chars[min(idx, 2)]
+            else:
+                grid[y][x] = random.choice(['~', '≈', '≋'])
+
+    for _ in range(5):
+        cx = random.randint(0, width - 1)
+        cy = random.randint(height // 2, height - 1)
+        for dy in range(-2, 3):
+            for dx in range(-2, 3):
+                if 0 <= cx + dx < width and 0 <= cy + dy < height:
+                    if abs(dx) + abs(dy) < 3:
+                        grid[cy + dy][cx + dx] = random.choice(['🐟', '🐠', '🐡'])
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def generate_lotus(width=41, height=17, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -942,6 +972,10 @@ def main():
         for i in range(count):
             print(f"\n--- Lotus {i+1} ---")
             print(generate_lotus(seed=i))
+    elif mode == "ocean":
+        for i in range(count):
+            print(f"\n--- Ocean {i+1} ---")
+            print(generate_ocean(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
