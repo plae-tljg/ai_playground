@@ -325,6 +325,22 @@ def generate_rainbow(width=40, height=15, seed=None):
     return '\n'.join(rainbow)
 
 
+def generate_checkerboard(width=20, height=10, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    board = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            if (x + y) % 2 == 0:
+                row.append(random.choice(['█', '▓', '▒']))
+            else:
+                row.append(random.choice(['░', '▒', '▓']))
+        board.append(''.join(row))
+    return '\n'.join(board)
+
+
 def generate_rosette(width=33, height=17, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -428,6 +444,10 @@ def main():
         for i in range(count):
             print(f"\n--- Rainbow {i+1} ---")
             print(generate_rainbow(seed=i))
+    elif mode == "checkerboard":
+        for i in range(count):
+            print(f"\n--- Checkerboard {i+1} ---")
+            print(generate_checkerboard(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
