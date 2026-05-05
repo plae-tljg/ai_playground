@@ -626,6 +626,28 @@ def generate_kaleidoscope(width=40, height=20, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_clouds(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    chars = " .☁️☁️☁️"
+
+    for y in range(height):
+        for x in range(width):
+            noise = random.random()
+            if noise < 0.1:
+                grid[y][x] = chars[0]
+            elif noise < 0.3:
+                grid[y][x] = random.choice(['☁', '☁'])
+            elif noise < 0.5:
+                grid[y][x] = random.choice(['☁️'])
+            else:
+                grid[y][x] = ' '
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v1.9")
@@ -748,6 +770,10 @@ def main():
         for i in range(count):
             print(f"\n--- Kaleidoscope {i+1} ---")
             print(generate_kaleidoscope(seed=i))
+    elif mode == "clouds":
+        for i in range(count):
+            print(f"\n--- Clouds {i+1} ---")
+            print(generate_clouds(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
