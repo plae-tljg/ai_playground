@@ -31,6 +31,22 @@ def generate_pattern(seed=None):
     ]
     return random.choice(patterns)
 
+def generate_spiral(size=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    spiral = []
+    for y in range(size):
+        row = []
+        for x in range(size):
+            dist = min(x, y, size-1-x, size-1-y)
+            if dist % 2 == 0:
+                row.append("●")
+            else:
+                row.append("○")
+        spiral.append(row)
+    return '\n'.join(''.join(row) for row in spiral)
+
 def generate_maze(width=21, height=11, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -73,6 +89,10 @@ def main():
         for i in range(count):
             print(f"\n--- Maze {i+1} ---")
             print(generate_maze(seed=i))
+    elif mode == "spiral":
+        for i in range(count):
+            print(f"\n--- Spiral {i+1} ---")
+            print(generate_spiral(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
