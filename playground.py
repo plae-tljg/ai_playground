@@ -304,6 +304,27 @@ def generate_concentric_circles(width=40, height=20, seed=None):
     return '\n'.join(circles)
 
 
+def generate_rainbow(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    colors = "红橙黄绿青蓝紫"
+    rainbow = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            dist = abs(x - width // 2)
+            band = int(dist / (width // 2) * 7)
+            band = min(band, 6 - band)
+            idx = min(int(abs(y - height // 2) / (height // 2) * len(colors)), len(colors) - 1)
+            if y >= height // 2 - band and y <= height // 2 + band:
+                row.append(colors[min(band, len(colors) - 1)])
+            else:
+                row.append(' ')
+        rainbow.append(''.join(row))
+    return '\n'.join(rainbow)
+
+
 def generate_rosette(width=33, height=17, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -403,6 +424,10 @@ def main():
         for i in range(count):
             print(f"\n--- Stars {i+1} ---")
             print(generate_stars(seed=i))
+    elif mode == "rainbow":
+        for i in range(count):
+            print(f"\n--- Rainbow {i+1} ---")
+            print(generate_rainbow(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
