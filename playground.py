@@ -90,6 +90,28 @@ def generate_mandala(size=17, seed=None):
         mandala.append(row)
     return '\n'.join(''.join(row) for row in mandala)
 
+def generate_banner(text, width=40, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    border_char = random.choice(["═", "─", "╔", "╗", "╚", "╝"])
+    chars = "░▒▓█"
+
+    lines = []
+    lines.append(border_char * width)
+    padded = text.center(width - 2)
+    lines.append(border_char + padded + border_char)
+    lines.append(border_char * width)
+
+    for i, line in enumerate(lines[1:-1], 1):
+        decorative = random.choice(chars)
+        lines[i] = decorative + line[1:-1] + decorative
+
+    lines.insert(1, "│" + " ".join(random.choice(chars) for _ in range(width // 2 - 1)) + "│")
+    lines.append("│" + " ".join(random.choice(chars) for _ in range(width // 2 - 1)) + "│")
+
+    return '\n'.join(lines)
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v1.2")
@@ -119,6 +141,11 @@ def main():
         for i in range(count):
             print(f"\n--- Mandala {i+1} ---")
             print(generate_mandala(seed=i))
+    elif mode == "banner":
+        text = sys.argv[2] if len(sys.argv) > 2 else "Hello World"
+        for i in range(count):
+            print(f"\n--- Banner {i+1} ---")
+            print(generate_banner(text, seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
