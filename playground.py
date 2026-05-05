@@ -768,9 +768,37 @@ def generate_cherry_blossom(width=40, height=15, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_lotus(width=41, height=17, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    center_x, center_y = width // 2, height // 2
+
+    for y in range(height):
+        for x in range(width):
+            dx, dy = x - center_x, y - center_y
+            dist = (dx * dx + dy * dy) ** 0.5
+            angle = math.atan2(dy, dx) if dist > 0 else 0
+            petal_angle = abs(math.sin(angle * 3))
+            if dist < 3:
+                grid[y][x] = random.choice(['✿', '❀', '❁'])
+            elif dist < 7 and petal_angle > 0.3:
+                grid[y][x] = random.choice(['❃', '❋', '✾'])
+            elif dist < 9 and petal_angle > 0.5:
+                grid[y][x] = random.choice(['⸝', '⸞', '⸟'])
+
+    for r in range(2, 6):
+        y = center_y + r
+        if y < height:
+            grid[y][center_x] = '│'
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.9")
+    print(f"[{timestamp}] AI Playground v2.0")
     print("-" * 40)
 
     count = 10
@@ -910,6 +938,10 @@ def main():
         for i in range(count):
             print(f"\n--- Cherry Blossom {i+1} ---")
             print(generate_cherry_blossom(seed=i))
+    elif mode == "lotus":
+        for i in range(count):
+            print(f"\n--- Lotus {i+1} ---")
+            print(generate_lotus(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
