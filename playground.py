@@ -798,6 +798,40 @@ def generate_ocean(width=40, height=15, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_aurora(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    chars = " ┌┐└┘│─⎯▔▁~≈≋∿❄❅❆"
+
+    for y in range(height):
+        for x in range(width):
+            phase1 = x / width * 3 * math.pi + y / height * 2 * math.pi
+            phase2 = x / width * 5 * math.pi + y / height * 3 * math.pi
+            wave1 = (math.sin(phase1) + 1) / 2
+            wave2 = (math.sin(phase2) + 1) / 2
+            combined = (wave1 + wave2) / 2
+            idx = min(int(combined * len(chars)), len(chars) - 1)
+            if y < height // 2:
+                intensity = 1 - (y / (height // 2))
+                if combined > 0.4:
+                    grid[y][x] = chars[min(idx, len(chars) - 1)]
+            else:
+                grid[y][x] = ' '
+
+    for _ in range(3):
+        cx = random.randint(0, width - 1)
+        cy = random.randint(0, height // 2)
+        for dy in range(-3, 4):
+            for dx in range(-3, 4):
+                if 0 <= cx + dx < width and 0 <= cy + dy < height // 2:
+                    if abs(dx) + abs(dy) < 4:
+                        grid[cy + dy][cx + dx] = random.choice(['✦', '✧', '⋆', '⁕'])
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def generate_lotus(width=41, height=17, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -972,10 +1006,10 @@ def main():
         for i in range(count):
             print(f"\n--- Lotus {i+1} ---")
             print(generate_lotus(seed=i))
-    elif mode == "ocean":
+    elif mode == "aurora":
         for i in range(count):
-            print(f"\n--- Ocean {i+1} ---")
-            print(generate_ocean(seed=i))
+            print(f"\n--- Aurora {i+1} ---")
+            print(generate_aurora(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
