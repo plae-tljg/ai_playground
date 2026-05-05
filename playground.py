@@ -860,6 +860,39 @@ def generate_lotus(width=41, height=17, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_mirror(width=41, height=17, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    center_x = width // 2
+
+    for y in range(height):
+        for x in range(width):
+            dx = abs(x - center_x)
+            dist_from_center = dx
+            angle = math.atan2(y - height // 2, x - center_x) if dx > 0 else 0
+            wave = math.sin(y / 3 + dist_from_center / 4)
+            intensity = (wave + 1) / 2
+            if intensity > 0.3:
+                if dist_from_center < 3:
+                    grid[y][x] = random.choice(['█', '▓', '▒'])
+                elif dist_from_center < 7:
+                    grid[y][x] = random.choice(['▓', '░'])
+                elif dist_from_center < 12 and intensity > 0.6:
+                    grid[y][x] = '░'
+
+    for y in range(height):
+        grid[y][center_x] = '│'
+
+    for y in range(0, height, 4):
+        if y < height:
+            grid[y][center_x - 1] = '║'
+            grid[y][center_x + 1] = '║'
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v2.0")
@@ -1010,6 +1043,10 @@ def main():
         for i in range(count):
             print(f"\n--- Aurora {i+1} ---")
             print(generate_aurora(seed=i))
+    elif mode == "mirror":
+        for i in range(count):
+            print(f"\n--- Mirror {i+1} ---")
+            print(generate_mirror(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
