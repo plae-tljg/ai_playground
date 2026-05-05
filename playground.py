@@ -249,6 +249,22 @@ def generate_cellular_automaton(width=40, height=20, rule=30, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_stars(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    chars = " .✦✧⋆∗✶✷✸✹✺✻✼❖"
+    stars = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            value = random.random()
+            idx = min(int(value * len(chars)), len(chars) - 1)
+            row.append(chars[idx])
+        stars.append(''.join(row))
+    return '\n'.join(stars)
+
+
 def generate_diamond(width=21, height=11, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -270,7 +286,7 @@ def generate_diamond(width=21, height=11, seed=None):
 
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.6")
+    print(f"[{timestamp}] AI Playground v1.7")
     print("-" * 40)
 
     count = 10
@@ -330,6 +346,10 @@ def main():
         for i in range(count):
             print(f"\n--- Diamond {i+1} ---")
             print(generate_diamond(seed=i))
+    elif mode == "stars":
+        for i in range(count):
+            print(f"\n--- Stars {i+1} ---")
+            print(generate_stars(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
