@@ -388,9 +388,45 @@ def generate_rosette(width=33, height=17, seed=None):
     return '\n'.join(''.join(row) for row in rosette)
 
 
+def generate_heart(width=21, height=11, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    heart = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            dx = abs(x - width // 2)
+            dy = y - height // 2 + 2
+            if dx * dx + dy * dy <= 12:
+                row.append(random.choice(['♥', '❤', '❥']))
+            else:
+                row.append(' ')
+        heart.append(''.join(row))
+    return '\n'.join(heart)
+
+
+def generate_pyramid(width=31, height=9, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    pyramid = []
+    for y in range(height):
+        row = []
+        indent = height - y - 1
+        stars = y * 2 + 1
+        for x in range(width):
+            if x < indent or x >= indent + stars:
+                row.append(' ')
+            else:
+                row.append(random.choice(['▲', '△', '◢', '◣']))
+        pyramid.append(''.join(row))
+    return '\n'.join(pyramid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.7")
+    print(f"[{timestamp}] AI Playground v1.8")
     print("-" * 40)
 
     count = 10
@@ -474,6 +510,14 @@ def main():
         for i in range(count):
             print(f"\n--- Fireworks {i+1} ---")
             print(generate_fireworks(seed=i))
+    elif mode == "heart":
+        for i in range(count):
+            print(f"\n--- Heart {i+1} ---")
+            print(generate_heart(seed=i))
+    elif mode == "pyramid":
+        for i in range(count):
+            print(f"\n--- Pyramid {i+1} ---")
+            print(generate_pyramid(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
