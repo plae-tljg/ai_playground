@@ -687,6 +687,31 @@ def generate_clouds(width=40, height=15, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_coral(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    chars = "✿❀❁❃❋⸶⸷◐◑"
+
+    for y in range(height):
+        for x in range(width):
+            phase = x / width * 2 * math.pi + y / height * math.pi
+            intensity = (math.sin(phase) + 1) / 2
+            if intensity > 0.3 and random.random() > 0.4:
+                grid[y][x] = random.choice(list(chars))
+
+    for _ in range(3):
+        cx, cy = random.randint(0, width), random.randint(0, height)
+        for dy in range(-3, 4):
+            for dx in range(-3, 4):
+                if 0 <= cx + dx < width and 0 <= cy + dy < height:
+                    if abs(dx) + abs(dy) < 4:
+                        grid[cy + dy][cx + dx] = random.choice(['🪸', '🪷', '🔴', '🟠'])
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v1.9")
@@ -817,6 +842,10 @@ def main():
         for i in range(count):
             print(f"\n--- Clouds {i+1} ---")
             print(generate_clouds(seed=i))
+    elif mode == "coral":
+        for i in range(count):
+            print(f"\n--- Coral {i+1} ---")
+            print(generate_coral(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
