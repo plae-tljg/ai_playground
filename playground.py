@@ -450,6 +450,45 @@ def generate_tunnel(width=40, height=20, seed=None):
     return '\n'.join(tunnel)
 
 
+def generate_dna_helix(width=40, height=20, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    helix = []
+    chars = "ATCG"
+    base_pairs = "─═┄┅"
+    
+    for y in range(height):
+        row = []
+        phase = y / height * 4 * math.pi
+        offset = int(math.sin(phase) * (width // 3))
+        
+        for x in range(width):
+            center_dist = abs(x - width // 2)
+            relative_pos = (x + offset - width // 2)
+            
+            if center_dist < 2:
+                if relative_pos < 0:
+                    row.append(random.choice(['╭', '╮']))
+                else:
+                    row.append(random.choice(['╯', '╰']))
+            elif center_dist < width // 3:
+                if (x + offset) % 4 == 0:
+                    row.append(random.choice(list(chars)))
+                elif (x + offset + 2) % 4 == 0:
+                    row.append(random.choice(list(chars)))
+                elif (x + offset) % 2 == 0:
+                    idx = min(int(center_dist / (width // 3) * len(base_pairs)), len(base_pairs) - 1)
+                    row.append(base_pairs[idx])
+                else:
+                    row.append(' ')
+            else:
+                row.append(' ')
+        helix.append(''.join(row))
+    
+    return '\n'.join(helix)
+
+
 def generate_snowflake(size=15, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -770,6 +809,10 @@ def main():
         for i in range(count):
             print(f"\n--- Kaleidoscope {i+1} ---")
             print(generate_kaleidoscope(seed=i))
+    elif mode == "dna":
+        for i in range(count):
+            print(f"\n--- DNA Helix {i+1} ---")
+            print(generate_dna_helix(seed=i))
     elif mode == "clouds":
         for i in range(count):
             print(f"\n--- Clouds {i+1} ---")
