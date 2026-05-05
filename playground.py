@@ -90,6 +90,21 @@ def generate_mandala(size=17, seed=None):
         mandala.append(row)
     return '\n'.join(''.join(row) for row in mandala)
 
+def generate_noise(width=40, height=15, scale=0.3, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    chars = " .:-=+*#%@"
+    noise = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            value = random.random()
+            idx = min(int(value * len(chars)), len(chars) - 1)
+            row.append(chars[idx])
+        noise.append(row)
+    return '\n'.join(''.join(row) for row in noise)
+
 def generate_banner(text, width=40, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -141,6 +156,10 @@ def main():
         for i in range(count):
             print(f"\n--- Mandala {i+1} ---")
             print(generate_mandala(seed=i))
+    elif mode == "noise":
+        for i in range(count):
+            print(f"\n--- Noise {i+1} ---")
+            print(generate_noise(seed=i))
     elif mode == "banner":
         text = sys.argv[2] if len(sys.argv) > 2 else "Hello World"
         for i in range(count):
