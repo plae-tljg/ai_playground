@@ -249,9 +249,28 @@ def generate_cellular_automaton(width=40, height=20, rule=30, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_diamond(width=21, height=11, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    diamond = []
+    center_x = width // 2
+    for y in range(height):
+        row = []
+        for x in range(width):
+            dist = abs(x - center_x) + abs(y - height // 2)
+            max_dist = height // 2
+            if dist <= max_dist:
+                row.append(random.choice(['◆', '◇', '○', '●']))
+            else:
+                row.append(' ')
+        diamond.append(row)
+    return '\n'.join(''.join(row) for row in diamond)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.5")
+    print(f"[{timestamp}] AI Playground v1.6")
     print("-" * 40)
 
     count = 10
@@ -307,6 +326,10 @@ def main():
         for i in range(count):
             print(f"\n--- Cellular Automaton {i+1} ---")
             print(generate_cellular_automaton(seed=i))
+    elif mode == "diamond":
+        for i in range(count):
+            print(f"\n--- Diamond {i+1} ---")
+            print(generate_diamond(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
