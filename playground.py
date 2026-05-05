@@ -8,6 +8,17 @@ import random
 import sys
 from datetime import datetime
 
+def generate_ascii_art(width=40, height=10, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    chars = "░▒▓█"
+    lines = []
+    for i in range(height):
+        row = ''.join(random.choice(chars) for _ in range(width))
+        lines.append(row)
+    return '\n'.join(lines)
+
 def generate_pattern(seed=None):
     if seed is not None:
         random.seed(seed)
@@ -22,19 +33,25 @@ def generate_pattern(seed=None):
 
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.0")
+    print(f"[{timestamp}] AI Playground v1.1")
     print("-" * 40)
 
     count = 10
+    mode = "patterns"
     if len(sys.argv) > 1:
         try:
             count = int(sys.argv[1])
         except ValueError:
-            pass
+            mode = sys.argv[1]
 
-    for i in range(count):
-        pattern = generate_pattern(seed=i)
-        print(f"{i+1:3d}: {pattern}")
+    if mode == "ascii":
+        for i in range(count):
+            print(f"\n--- Generation {i+1} ---")
+            print(generate_ascii_art(seed=i))
+    else:
+        for i in range(count):
+            pattern = generate_pattern(seed=i)
+            print(f"{i+1:3d}: {pattern}")
 
     print("-" * 40)
     print("Generation complete!")
