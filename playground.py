@@ -406,6 +406,26 @@ def generate_heart(width=21, height=11, seed=None):
     return '\n'.join(heart)
 
 
+def generate_hexagon(width=25, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    hexagon = []
+    center_x = width // 2
+    for y in range(height):
+        row = []
+        dist_from_center = abs(y - height // 2)
+        row_width = height - dist_from_center
+        start_x = center_x - row_width // 2
+        for x in range(width):
+            if start_x <= x < start_x + row_width:
+                row.append(random.choice(['⬡', '⬢', '◈', '◉']))
+            else:
+                row.append(' ')
+        hexagon.append(''.join(row))
+    return '\n'.join(hexagon)
+
+
 def generate_pyramid(width=31, height=9, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -514,6 +534,10 @@ def main():
         for i in range(count):
             print(f"\n--- Heart {i+1} ---")
             print(generate_heart(seed=i))
+    elif mode == "hexagon":
+        for i in range(count):
+            print(f"\n--- Hexagon {i+1} ---")
+            print(generate_hexagon(seed=i))
     elif mode == "pyramid":
         for i in range(count):
             print(f"\n--- Pyramid {i+1} ---")
