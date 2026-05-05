@@ -68,6 +68,28 @@ def generate_maze(width=21, height=11, seed=None):
 
     return '\n'.join(''.join(row) for row in maze)
 
+def generate_mandala(size=17, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    mandala = []
+    center = size // 2
+    for y in range(size):
+        row = []
+        for x in range(size):
+            dist = abs(x - center) + abs(y - center)
+            dist_from_center = ((x - center) ** 2 + (y - center) ** 2) ** 0.5
+            if dist_from_center <= 1:
+                row.append("◆")
+            elif int(dist_from_center * 2) % 3 == 0:
+                row.append("❀")
+            elif dist % 2 == 0:
+                row.append("✿")
+            else:
+                row.append("❁")
+        mandala.append(row)
+    return '\n'.join(''.join(row) for row in mandala)
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v1.2")
@@ -93,6 +115,10 @@ def main():
         for i in range(count):
             print(f"\n--- Spiral {i+1} ---")
             print(generate_spiral(seed=i))
+    elif mode == "mandala":
+        for i in range(count):
+            print(f"\n--- Mandala {i+1} ---")
+            print(generate_mandala(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
