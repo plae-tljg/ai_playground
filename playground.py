@@ -183,10 +183,51 @@ def generate_fractal_tree(width=40, height=15, seed=None):
     
     return '\n'.join(''.join(row) for row in grid)
 
+def generate_sierpinski(width=32, height=16, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    triangle = [[' ' for _ in range(width)] for _ in range(height)]
+    
+    def fill_triangle(x1, y1, x2, y2, x3, y3):
+        if abs(x2 - x1) < 2:
+            return
+        mid1_x, mid1_y = (x1 + x2) // 2, (y1 + y2) // 2
+        mid2_x, mid2_y = (x1 + x3) // 2, (y1 + y3) // 2
+        mid3_x, mid3_y = (x2 + x3) // 2, (y2 + y3) // 2
+        
+        for dy in range(min(y1, y2, y3), max(y1, y2, y3)):
+            for dx in range(min(x1, x2, x3), max(x1, x2, x3)):
+                if abs(dx - mid1_x) + abs(dy - mid1_y) < abs(mid2_x - mid1_x):
+                    triangle[dy][dx] = ' '
+                else:
+                    triangle[dy][dx] = '█'
+        
+        fill_triangle(x1, y1, mid1_x, mid1_y, mid2_x, mid2_y)
+        fill_triangle(mid1_x, mid1_y, x2, y2, mid3_x, mid3_y)
+        fill_triangle(mid2_x, mid2_y, mid3_x, mid3_y, x3, y3)
+
+    def sierpinski_iterative(size, cy):
+        row_len = size
+        for y in range(cy, cy + size):
+            if y < height:
+                start = (size - (y - cy + 1)) // 2
+                for x in range(start, start + (y - cy + 1)):
+                    if x < width:
+                        triangle[y][x] = random.choice(['▓', '▒', '░', '█'])
+                for x in range(start + (y - cy + 1), start + 2 * (y - cy + 1)):
+                    if x < width:
+                        triangle[y][x] = ' '
+
+    tier1_size = height - 2
+    sierpinski_iterative(tier1_size, 1)
+    
+    return '\n'.join(''.join(row) for row in triangle)
+
 
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.3")
+    print(f"[{timestamp}] AI Playground v1.4")
     print("-" * 40)
 
     count = 10
@@ -234,6 +275,10 @@ def main():
         for i in range(count):
             print(f"\n--- Fractal Tree {i+1} ---")
             print(generate_fractal_tree(seed=i))
+    elif mode == "sierpinski":
+        for i in range(count):
+            print(f"\n--- Sierpinski Triangle {i+1} ---")
+            print(generate_sierpinski(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
