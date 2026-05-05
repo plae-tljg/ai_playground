@@ -90,6 +90,22 @@ def generate_mandala(size=17, seed=None):
         mandala.append(row)
     return '\n'.join(''.join(row) for row in mandala)
 
+def generate_heatmap(width=30, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    chars = " .:;+*#@"
+    heatmap = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            value = abs(x - width // 2) / (width // 2) * abs(y - height // 2) / (height // 2)
+            value = min(value + random.random() * 0.3, 1.0)
+            idx = min(int(value * len(chars)), len(chars) - 1)
+            row.append(chars[idx])
+        heatmap.append(row)
+    return '\n'.join(''.join(row) for row in heatmap)
+
 def generate_noise(width=40, height=15, scale=0.3, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -160,6 +176,10 @@ def main():
         for i in range(count):
             print(f"\n--- Noise {i+1} ---")
             print(generate_noise(seed=i))
+    elif mode == "heatmap":
+        for i in range(count):
+            print(f"\n--- Heatmap {i+1} ---")
+            print(generate_heatmap(seed=i))
     elif mode == "banner":
         text = sys.argv[2] if len(sys.argv) > 2 else "Hello World"
         for i in range(count):
