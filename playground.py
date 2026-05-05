@@ -284,6 +284,26 @@ def generate_diamond(width=21, height=11, seed=None):
     return '\n'.join(''.join(row) for row in diamond)
 
 
+def generate_concentric_circles(width=40, height=20, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    circles = []
+    center_x, center_y = width // 2, height // 2
+    max_radius = min(center_x, center_y)
+
+    for y in range(height):
+        row = []
+        for x in range(width):
+            dist = ((x - center_x) ** 2 + (y - center_y) ** 2) ** 0.5
+            ring = int(dist / max_radius * 6)
+            chars = " .○◌●◉"
+            idx = min(ring, len(chars) - 1)
+            row.append(chars[idx])
+        circles.append(''.join(row))
+    return '\n'.join(circles)
+
+
 def generate_rosette(width=33, height=17, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -375,6 +395,10 @@ def main():
         for i in range(count):
             print(f"\n--- Rosette {i+1} ---")
             print(generate_rosette(seed=i))
+    elif mode == "circles":
+        for i in range(count):
+            print(f"\n--- Concentric Circles {i+1} ---")
+            print(generate_concentric_circles(seed=i))
     elif mode == "stars":
         for i in range(count):
             print(f"\n--- Stars {i+1} ---")
