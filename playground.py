@@ -284,6 +284,31 @@ def generate_diamond(width=21, height=11, seed=None):
     return '\n'.join(''.join(row) for row in diamond)
 
 
+def generate_rosette(width=33, height=17, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    rosette = []
+    center_x, center_y = width // 2, height // 2
+    chars = "✿❀❁✾❃❋✦✧⋆⭒"
+
+    for y in range(height):
+        row = []
+        for x in range(width):
+            dx, dy = x - center_x, y - center_y
+            dist = (dx * dx + dy * dy) ** 0.5
+            angle = math.atan2(dy, dx)
+            pattern_val = (dist / 3 + angle * 2) % (len(chars) * 1.5)
+            if int(pattern_val) < len(chars):
+                row.append(chars[int(pattern_val)])
+            elif dist < min(center_x, center_y) * 0.9:
+                row.append(random.choice(['❀', '✿', '❁']))
+            else:
+                row.append(' ')
+        rosette.append(row)
+    return '\n'.join(''.join(row) for row in rosette)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v1.7")
@@ -346,6 +371,10 @@ def main():
         for i in range(count):
             print(f"\n--- Diamond {i+1} ---")
             print(generate_diamond(seed=i))
+    elif mode == "rosette":
+        for i in range(count):
+            print(f"\n--- Rosette {i+1} ---")
+            print(generate_rosette(seed=i))
     elif mode == "stars":
         for i in range(count):
             print(f"\n--- Stars {i+1} ---")
