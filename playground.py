@@ -596,6 +596,36 @@ def generate_vortex(width=40, height=20, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_kaleidoscope(width=40, height=20, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    center_x, center_y = width // 2, height // 2
+    segments = random.randint(6, 12)
+    colors = "🟢🔵🟣🔴🟠🟡🟤⚫⚪"
+
+    for y in range(height):
+        for x in range(width):
+            dx, dy = x - center_x, y - center_y
+            dist = (dx * dx + dy * dy) ** 0.5
+            angle = math.atan2(dy, dx) if dist > 0 else 0
+            normalized_angle = (angle + math.pi) / (2 * math.pi)
+            segment = int(normalized_angle * segments) % segments
+            pattern_val = (dist / 2 + segment * 0.5) % 3
+            if dist < 2:
+                grid[y][x] = random.choice(['★', '✦', '✧'])
+            elif int(pattern_val) == 0:
+                grid[y][x] = random.choice(['◈', '◉', '◊'])
+            elif int(pattern_val) == 1:
+                grid[y][x] = random.choice(['❖', '✿', '❀'])
+            else:
+                if dist < min(center_x, center_y) * 0.8:
+                    grid[y][x] = random.choice(list('▓▒░'))
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v1.9")
@@ -714,6 +744,10 @@ def main():
         for i in range(count):
             print(f"\n--- Vortex {i+1} ---")
             print(generate_vortex(seed=i))
+    elif mode == "kaleidoscope":
+        for i in range(count):
+            print(f"\n--- Kaleidoscope {i+1} ---")
+            print(generate_kaleidoscope(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
