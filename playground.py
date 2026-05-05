@@ -426,6 +426,62 @@ def generate_hexagon(width=25, height=15, seed=None):
     return '\n'.join(hexagon)
 
 
+def generate_tunnel(width=40, height=20, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    tunnel = []
+    center_x, center_y = width // 2, height // 2
+    chars = " .·:;+*#@█"
+    for y in range(height):
+        row = []
+        for x in range(width):
+            dx, dy = x - center_x, y - center_y
+            dist = (dx * dx + dy * dy) ** 0.5
+            max_dist = ((width // 2) ** 2 + (height // 2) ** 2) ** 0.5
+            value = dist / max_dist
+            idx = min(int(value * len(chars)), len(chars) - 1)
+            angle = math.atan2(dy, dx)
+            if abs(dx) < 2 or abs(dy) < 2:
+                row.append(random.choice(['║', '╔', '╗', '╚', '╝', '═']))
+            else:
+                row.append(chars[idx])
+        tunnel.append(''.join(row))
+    return '\n'.join(tunnel)
+
+
+def generate_snowflake(size=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(size)] for _ in range(size)]
+    center = size // 2
+
+    for y in range(size):
+        for x in range(size):
+            dx, dy = x - center, y - center
+            dist = (dx * dx + dy * dy) ** 0.5
+            if dist < 1:
+                grid[y][x] = random.choice(['*', '✱', '✲'])
+            elif dist < 3:
+                grid[y][x] = random.choice(['❄', '❅', '❆', '✦'])
+            elif int(dist) % 2 == 0:
+                grid[y][x] = random.choice(['·', '•', '◦'])
+
+    for i in range(center):
+        grid[center - i][center] = '│'
+        grid[center + i][center] = '│'
+        grid[center][center - i] = '─'
+        grid[center][center + i] = '─'
+        if i < center // 2:
+            grid[center - i][center - i] = '┌'
+            grid[center - i][center + i] = '┐'
+            grid[center + i][center - i] = '└'
+            grid[center + i][center + i] = '┘'
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def generate_pyramid(width=31, height=9, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -446,7 +502,7 @@ def generate_pyramid(width=31, height=9, seed=None):
 
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.8")
+    print(f"[{timestamp}] AI Playground v1.9")
     print("-" * 40)
 
     count = 10
@@ -542,6 +598,14 @@ def main():
         for i in range(count):
             print(f"\n--- Pyramid {i+1} ---")
             print(generate_pyramid(seed=i))
+    elif mode == "tunnel":
+        for i in range(count):
+            print(f"\n--- Tunnel {i+1} ---")
+            print(generate_tunnel(seed=i))
+    elif mode == "snowflake":
+        for i in range(count):
+            print(f"\n--- Snowflake {i+1} ---")
+            print(generate_snowflake(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
