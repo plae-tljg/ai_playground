@@ -325,6 +325,28 @@ def generate_rainbow(width=40, height=15, seed=None):
     return '\n'.join(rainbow)
 
 
+def generate_fireworks(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    num_explosions = random.randint(2, 4)
+
+    for _ in range(num_explosions):
+        cx = random.randint(width // 4, 3 * width // 4)
+        cy = random.randint(height // 4, 3 * height // 4)
+        radius = random.randint(3, 6)
+        color = random.choice(['✿', '❀', '❁', '✸', '✹', '✺'])
+
+        for y in range(height):
+            for x in range(width):
+                dist = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
+                if dist <= radius:
+                    grid[y][x] = color
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def generate_checkerboard(width=20, height=10, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -448,6 +470,10 @@ def main():
         for i in range(count):
             print(f"\n--- Checkerboard {i+1} ---")
             print(generate_checkerboard(seed=i))
+    elif mode == "fireworks":
+        for i in range(count):
+            print(f"\n--- Fireworks {i+1} ---")
+            print(generate_fireworks(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
