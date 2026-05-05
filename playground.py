@@ -687,6 +687,37 @@ def generate_clouds(width=40, height=15, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_constellation(width=40, height=20, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    stars = []
+    num_stars = random.randint(8, 15)
+
+    for _ in range(num_stars):
+        sx = random.randint(1, width - 2)
+        sy = random.randint(1, height - 2)
+        stars.append((sx, sy))
+        grid[sy][sx] = random.choice(['*', '✦', '✧', '⋆'])
+
+    for i in range(len(stars) - 1):
+        x1, y1 = stars[i]
+        x2, y2 = stars[i + 1]
+        dx, dy = x2 - x1, y2 - y1
+        steps = max(abs(dx), abs(dy))
+        if steps > 0:
+            for step in range(steps):
+                t = step / steps
+                cx = int(x1 + t * dx)
+                cy = int(y1 + t * dy)
+                if 0 <= cx < width and 0 <= cy < height:
+                    if grid[cy][cx] == ' ':
+                        grid[cy][cx] = random.choice(['·', '•', '◦', '⁚'])
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def generate_coral(width=40, height=15, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -846,6 +877,10 @@ def main():
         for i in range(count):
             print(f"\n--- Coral {i+1} ---")
             print(generate_coral(seed=i))
+    elif mode == "constellation":
+        for i in range(count):
+            print(f"\n--- Constellation {i+1} ---")
+            print(generate_constellation(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
