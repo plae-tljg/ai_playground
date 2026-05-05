@@ -225,9 +225,33 @@ def generate_sierpinski(width=32, height=16, seed=None):
     return '\n'.join(''.join(row) for row in triangle)
 
 
+def generate_cellular_automaton(width=40, height=20, rule=30, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = []
+    row = [' ' for _ in range(width)]
+    row[width // 2] = '█'
+    grid.append(row)
+
+    for _ in range(height - 1):
+        new_row = [' ' for _ in range(width)]
+        for x in range(width):
+            left = grid[-1][(x - 1) % width]
+            center = grid[-1][x]
+            right = grid[-1][(x + 1) % width]
+            pattern = (left == '█', center == '█', right == '█')
+            idx = (pattern[0] << 2) | (pattern[1] << 1) | pattern[2]
+            if (rule >> idx) & 1:
+                new_row[x] = random.choice(['█', '▓', '▒'])
+        grid.append(new_row)
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.4")
+    print(f"[{timestamp}] AI Playground v1.5")
     print("-" * 40)
 
     count = 10
@@ -279,6 +303,10 @@ def main():
         for i in range(count):
             print(f"\n--- Sierpinski Triangle {i+1} ---")
             print(generate_sierpinski(seed=i))
+    elif mode == "automaton":
+        for i in range(count):
+            print(f"\n--- Cellular Automaton {i+1} ---")
+            print(generate_cellular_automaton(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
