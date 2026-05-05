@@ -500,6 +500,43 @@ def generate_pyramid(width=31, height=9, seed=None):
     return '\n'.join(pyramid)
 
 
+def generate_galaxy(width=41, height=21, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    center_x, center_y = width // 2, height // 2
+    stars = "✨✦✧⋆⭒✶✷⸝⸞⸟"
+
+    for y in range(height):
+        for x in range(width):
+            dx, dy = x - center_x, y - center_y
+            dist = (dx * dx + dy * dy) ** 0.5
+            if dist < 1:
+                grid[y][x] = random.choice(['☉', '☀', '◉'])
+            elif dist < 4:
+                grid[y][x] = random.choice(['✸', '✹', '❂'])
+            elif dist < 8:
+                angle = math.atan2(dy, dx)
+                spiral = (angle + dist / 3) % (2 * math.pi)
+                if int(spiral * 3) % 2 == 0:
+                    grid[y][x] = random.choice(list(stars))
+            else:
+                value = random.random()
+                if value < 0.1:
+                    grid[y][x] = random.choice(list(stars))
+
+    for arm in range(3):
+        angle_offset = arm * (2 * math.pi / 3)
+        for r in range(2, min(center_x, center_y) - 1):
+            x = int(center_x + r * math.cos(angle_offset + r * 0.15))
+            y = int(center_y + r * math.sin(angle_offset + r * 0.15))
+            if 0 <= x < width and 0 <= y < height:
+                grid[y][x] = random.choice(['✧', '✦', '✶'])
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v1.9")
@@ -606,6 +643,10 @@ def main():
         for i in range(count):
             print(f"\n--- Snowflake {i+1} ---")
             print(generate_snowflake(seed=i))
+    elif mode == "galaxy":
+        for i in range(count):
+            print(f"\n--- Galaxy {i+1} ---")
+            print(generate_galaxy(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
