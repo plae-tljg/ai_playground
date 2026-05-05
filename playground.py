@@ -4,6 +4,7 @@ Simple AI playground demo script.
 Generates text-based patterns and outputs them.
 """
 
+import math
 import random
 import sys
 from datetime import datetime
@@ -143,9 +144,49 @@ def generate_banner(text, width=40, seed=None):
 
     return '\n'.join(lines)
 
+def generate_waves(width=40, height=10, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    waves = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            phase = (x / width * 4 * 3.14159) + (y / height * 3.14159)
+            value = (math.sin(phase) + 1) / 2
+            chars = " ▁▂▃▄▅▆▇█"
+            idx = min(int(value * len(chars)), len(chars) - 1)
+            row.append(chars[idx])
+        waves.append(''.join(row))
+    return '\n'.join(waves)
+
+
+def generate_fractal_tree(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    
+    def draw_branch(x, y, angle, length, depth):
+        if depth == 0 or length < 1:
+            return
+        dx = int(length * math.cos(angle))
+        dy = int(length * math.sin(angle))
+        end_x, end_y = x + dx, y + dy
+        if 0 <= end_x < width and 0 <= end_y < height:
+            grid[end_y][end_x] = random.choice(['*', '✱', '✲', '∗'])
+        draw_branch(end_x, end_y, angle - 0.5, length * 0.7, depth - 1)
+        draw_branch(end_x, end_y, angle + 0.5, length * 0.7, depth - 1)
+
+    start_x, start_y = width // 2, height - 1
+    draw_branch(start_x, start_y, -math.pi / 2, height // 2, 5)
+    
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.2")
+    print(f"[{timestamp}] AI Playground v1.3")
     print("-" * 40)
 
     count = 10
@@ -185,6 +226,14 @@ def main():
         for i in range(count):
             print(f"\n--- Banner {i+1} ---")
             print(generate_banner(text, seed=i))
+    elif mode == "waves":
+        for i in range(count):
+            print(f"\n--- Waves {i+1} ---")
+            print(generate_waves(seed=i))
+    elif mode == "tree":
+        for i in range(count):
+            print(f"\n--- Fractal Tree {i+1} ---")
+            print(generate_fractal_tree(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
