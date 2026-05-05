@@ -31,9 +31,30 @@ def generate_pattern(seed=None):
     ]
     return random.choice(patterns)
 
+def generate_maze(width=21, height=11, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    maze = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            if x == 0 or x == width - 1 or y == 0 or y == height - 1:
+                row.append("█")
+            elif random.random() < 0.3:
+                row.append("█")
+            else:
+                row.append(" ")
+        maze.append(row)
+
+    maze[1][1] = "S"
+    maze[height-2][width-2] = "E"
+
+    return '\n'.join(''.join(row) for row in maze)
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] AI Playground v1.1")
+    print(f"[{timestamp}] AI Playground v1.2")
     print("-" * 40)
 
     count = 10
@@ -48,6 +69,10 @@ def main():
         for i in range(count):
             print(f"\n--- Generation {i+1} ---")
             print(generate_ascii_art(seed=i))
+    elif mode == "maze":
+        for i in range(count):
+            print(f"\n--- Maze {i+1} ---")
+            print(generate_maze(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
