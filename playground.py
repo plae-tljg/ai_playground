@@ -537,6 +537,39 @@ def generate_galaxy(width=41, height=21, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_spider_web(width=41, height=21, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    center_x, center_y = width // 2, height // 2
+    max_radius = min(center_x, center_y)
+
+    for y in range(height):
+        for x in range(width):
+            dx, dy = x - center_x, y - center_y
+            dist = (dx * dx + dy * dy) ** 0.5
+            angle = math.atan2(dy, dx) if dist > 0 else 0
+            if dist < 1:
+                grid[y][x] = '●'
+            elif int(dist) % 3 == 0:
+                grid[y][x] = '○'
+            elif abs(math.sin(angle * 6)) < 0.3:
+                grid[y][x] = '│' if abs(dx) > abs(dy) else '─'
+            elif dist < max_radius * 0.8:
+                grid[y][x] = random.choice(['◌', '◎', '○'])
+
+    for i in range(0, center_x, 4):
+        for dy in range(-i, i + 1):
+            for dx in range(-i, i + 1):
+                if dx * dx + dy * dy == i * i:
+                    x, y = center_x + dx, center_y + dy
+                    if 0 <= x < width and 0 <= y < height:
+                        grid[y][x] = '●'
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def generate_vortex(width=40, height=20, seed=None):
     if seed is not None:
         random.seed(seed)
@@ -673,6 +706,10 @@ def main():
         for i in range(count):
             print(f"\n--- Galaxy {i+1} ---")
             print(generate_galaxy(seed=i))
+    elif mode == "spider":
+        for i in range(count):
+            print(f"\n--- Spider Web {i+1} ---")
+            print(generate_spider_web(seed=i))
     elif mode == "vortex":
         for i in range(count):
             print(f"\n--- Vortex {i+1} ---")
