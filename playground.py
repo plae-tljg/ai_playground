@@ -743,6 +743,31 @@ def generate_coral(width=40, height=15, seed=None):
     return '\n'.join(''.join(row) for row in grid)
 
 
+def generate_cherry_blossom(width=40, height=15, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    grid = [[' ' for _ in range(width)] for _ in range(height)]
+    chars = "✿❀❁❃✸✹❋"
+
+    for y in range(height):
+        for x in range(width):
+            phase = x / width * 3 * math.pi + y / height * 2 * math.pi
+            intensity = (math.sin(phase) + 1) / 2
+            if intensity > 0.4 and random.random() > 0.5:
+                grid[y][x] = random.choice(list(chars))
+
+    for _ in range(4):
+        cx, cy = random.randint(2, width - 3), random.randint(2, height - 3)
+        for dy in range(-2, 3):
+            for dx in range(-2, 3):
+                if 0 <= cx + dx < width and 0 <= cy + dy < height:
+                    if abs(dx) + abs(dy) < 3:
+                        grid[cy + dy][cx + dx] = random.choice(['❀', '✿', '❁', '❃'])
+
+    return '\n'.join(''.join(row) for row in grid)
+
+
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] AI Playground v1.9")
@@ -881,6 +906,10 @@ def main():
         for i in range(count):
             print(f"\n--- Constellation {i+1} ---")
             print(generate_constellation(seed=i))
+    elif mode == "cherry":
+        for i in range(count):
+            print(f"\n--- Cherry Blossom {i+1} ---")
+            print(generate_cherry_blossom(seed=i))
     else:
         for i in range(count):
             pattern = generate_pattern(seed=i)
